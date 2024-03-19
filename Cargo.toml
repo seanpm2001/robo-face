@@ -1,0 +1,18 @@
+[package]
+name = "robo-face"
+version = "0.0.1"
+authors = ["Slint Developers <info@slint.dev>"]
+edition = "2021"
+build = "build.rs"
+license = "MIT"
+publish = false
+
+[[bin]]
+path = "main.rs"
+name = "robo-face"
+
+[dependencies]
+slint = { version = "1.5.0" }
+
+[build-dependencies]
+slint-build = { version = "1.5.0" }
