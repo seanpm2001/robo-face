@@ -1,0 +1,15 @@
+import { Eye } from "eye.slint";
+
+export component Face {
+    width: 200px;
+    height: 200px;
+
+    Rectangle {
+        border-radius: max(self.width, self.height) / 2;
+        border-width: 1px;
+        border-color: black;
+        background: yellow;
+
+        Eye {}
+    }
+}
