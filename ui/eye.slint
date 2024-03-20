@@ -1,76 +1,60 @@
 import { Palette } from "palette.slint";
 
+export enum EyeState {
+    Default,
+    Open,
+    Closed
+}
+
 export component Eye {
 
-    private property <int> the-y: 40;
-    private property <bool> closed;
+    private property <length> inner-height: root.height / 2;
 
     width: 80px;
     height: 80px;
 
+    in property <EyeState> state: touch-area.pressed ? EyeState.Open : EyeState.Default;
 
+    touch-area := TouchArea { }
 
-    TouchArea {
-        clicked => {
-            closed = !closed;
-        }
-    }
-
-    Path {
-        stroke: black;
-        stroke-width: 1px;
-        fill: white;
-
-        // Circle {}
-        MoveTo {
-            x: 0;
-            y: 0;
-        }
-
-        ArcTo {
-            radius-x: 4;
-            radius-y: 2;
-            x: root.width / 1px;
-            y: 0;
-            sweep: true;
-            large-arc: true;
-        }
-
-        ArcTo {
-            radius-x: 4;
-            radius-y: 2;
-            x: 0;
-            y: 0;
-            sweep: true;
-            large-arc: true;
-        }
-
-        Close {}
+    if root.state == EyeState.Closed : Rectangle {
+        height: 1px;
+        background: black;
     }
 
     Rectangle {
-        width: parent.width / 2.5;
-        height: parent.height / 2.5;
-        border-radius: max(self.width, self.height) / 2;
-        border-width: 1px;
-        border-color: Palette.slint.darker(2.0);
-        background: Palette.slint;
+        height: root.inner-height;
+        background: white;
+        border-radius: root.height / 2;
+        clip: true;
 
         Rectangle {
-            width: parent.width / 2;
-            height: parent.height / 2;
+            width: root.width / 2.5;
+            height: root.height / 2.5;
             border-radius: max(self.width, self.height) / 2;
-            background: black;
+            border-width: 1px;
+            border-color: Palette.slint.darker(2.0);
+            background: Palette.slint;
+
+            Rectangle {
+                width: parent.width / 2;
+                height: parent.height / 2;
+                border-radius: max(self.width, self.height) / 2;
+                background: black;
+            }
         }
     }
 
     states [
-        closed when root.closed : {
-            the-y: 20;
+        closed when root.state == EyeState.Closed : {
+            root.inner-height: 0px;
+        }
+        open when root.state == EyeState.Open : {
+            root.inner-height: root.height / 1.3;
         }
     ]
 
-    animate the-y {
-         duration: 500ms;
+    animate inner-height {
+         duration: 400ms;
     }
 }
