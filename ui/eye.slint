@@ -1,9 +1,76 @@
+import { Palette } from "palette.slint";
+
 export component Eye {
-    width: 40px;
-    height: 40px;
+
+    private property <int> the-y: 40;
+    private property <bool> closed;
+
+    width: 80px;
+    height: 80px;
+
+
+
+    TouchArea {
+        clicked => {
+            closed = !closed;
+        }
+    }
+
+    Path {
+        stroke: black;
+        stroke-width: 1px;
+        fill: white;
+
+        // Circle {}
+        MoveTo {
+            x: 0;
+            y: 0;
+        }
+
+        ArcTo {
+            radius-x: 4;
+            radius-y: 2;
+            x: root.width / 1px;
+            y: 0;
+            sweep: true;
+            large-arc: true;
+        }
+
+        ArcTo {
+            radius-x: 4;
+            radius-y: 2;
+            x: 0;
+            y: 0;
+            sweep: true;
+            large-arc: true;
+        }
+
+        Close {}
+    }
 
     Rectangle {
-        background: black;
+        width: parent.width / 2.5;
+        height: parent.height / 2.5;
         border-radius: max(self.width, self.height) / 2;
+        border-width: 1px;
+        border-color: Palette.slint.darker(2.0);
+        background: Palette.slint;
+
+        Rectangle {
+            width: parent.width / 2;
+            height: parent.height / 2;
+            border-radius: max(self.width, self.height) / 2;
+            background: black;
+        }
+    }
+
+    states [
+        closed when root.closed : {
+            the-y: 20;
+        }
+    ]
+
+    animate the-y {
+         duration: 500ms;
     }
 }
