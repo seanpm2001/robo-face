@@ -1,15 +1,42 @@
-import { Eye } from "eye.slint";
+import { Eye, EyeState } from "eye.slint";
+import { Mouth } from "mouth.slint";
+
+export enum FaceState {
+    Default,
+    Angry
+}
 
 export component Face {
-    width: 200px;
-    height: 200px;
+    in property <FaceState> state;
+
+    width: root.height;
 
     Rectangle {
         border-radius: max(self.width, self.height) / 2;
         border-width: 1px;
         border-color: black;
-        background: yellow;
+        background: #fdcb47;
 
-        Eye {}
+        left-eye := Eye {
+            x: 64px;
+            y: 110px;
+        }
+
+        right-eye := Eye {
+            x: root.width - 64px - self.width;
+            y: 110px;
+        }
+
+        Mouth {
+            y: root.height / 2 + (root.height / 2 - self.height) / 2;
+            width: root.width - 256px;
+        }
     }
+
+    states [
+        angry when root.state == FaceState.Angry : {
+            left-eye.state: EyeState.PartialClosed;
+            right-eye.state: EyeState.EybrownUp;
+        }
+    ]
 }

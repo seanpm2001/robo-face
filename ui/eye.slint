@@ -3,24 +3,51 @@ import { Palette } from "palette.slint";
 export enum EyeState {
     Default,
     Open,
-    Closed
+    Closed,
+    PartialClosed,
+    EybrownUp
+}
+
+component Eybrown inherits Rectangle {
+   in property <length> inner-height <=> inner.height;
+   in property <length> inner-border-radius <=> inner.border-radius;
+
+   clip: true;
+
+    inner := Rectangle {
+        y: 20px;
+        border-width: 5px;
+        border-color: black;
+        border-radius: root.inner-height / 2;
+    }
 }
 
 export component Eye {
-
     private property <length> inner-height: root.height / 2;
+    private property <duration> animation-duration: 300ms;
 
-    width: 80px;
-    height: 80px;
+    width: 160px;
+    height: root.width;
 
-    in property <EyeState> state: touch-area.pressed ? EyeState.Open : EyeState.Default;
+    in property <EyeState> state;
 
-    touch-area := TouchArea { }
+    eybrown := Eybrown {
+        y: 0;
+        height: root.height / 4;
+        inner-height: root.height / 2;
+        inner-border-radius: root.height / 2;
+
+        animate y {
+            duration: root.animation-duration;
+       }
+    }
 
     if root.state == EyeState.Closed : Rectangle {
-        height: 1px;
+        width: parent.width;
+        height: 2px;
         background: black;
     }
+
 
     Rectangle {
         height: root.inner-height;
@@ -52,9 +79,17 @@ export component Eye {
         open when root.state == EyeState.Open : {
             root.inner-height: root.height / 1.3;
         }
+        eybrown when root.state == EyeState.EybrownUp : {
+            root.inner-height: root.height / 1.8;
+            eybrown.y: -20px;
+        }
+        partial-closed when root.state == EyeState.PartialClosed : {
+            root.inner-height: root.height / 2.2;
+            eybrown.y: 4px;
+        }
     ]
 
     animate inner-height {
-         duration: 400ms;
+         duration: root.animation-duration;
     }
 }

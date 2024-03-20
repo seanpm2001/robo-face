@@ -1,9 +1,30 @@
-import { Face } from "face.slint";
+import { Face, FaceState } from "face.slint";
+import { ComboBox } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
     title: "robo-face";
-    width: 240px;
-    height: 200px;
+    width: 1024px;
+    height: 600px;
 
-    Face {}
+    Face {
+        height: root.height - 64px;
+        state: root.string-to-face-state(combobox.current-value);
+    }
+
+    combobox := ComboBox {
+        y: 4px;
+
+        model: [
+            "Default",
+            "Angy"
+        ];
+    }
+
+    pure function string-to-face-state(state: string) -> FaceState {
+        if state == "Angy" {
+            return FaceState.Angry;
+        }
+
+        FaceState.Default
+    }
 }
