@@ -4,27 +4,76 @@ export enum MouthState {
 }
 
 export component Mouth inherits Rectangle {
+    private property <length> closed-height: 6px;
     in property <MouthState> state;
 
     width: 600px;
     height: root.width / 2;
     clip: true;
 
-    Rectangle {
-        y: root.height - self.height;
+    main := Rectangle {
+        y: 0;
         width: 100%;
-        height: 200%;
-        border-radius: self.height / 2;
-        background: black;
+        height: root.height;
+        visible: angry.height == root.closed-height;
+
+        inner := Rectangle {
+            y: parent.height - self.height;
+            width: 100%;
+            height: 200%;
+            border-radius: self.height / 2;
+            background: black;
+        }
+    }
+
+
+    angry := Rectangle {
+        y: 0;
+        width: 100%;
+        height: root.closed-height;
+        clip: true;
+        // visible: main.height > root.closed-height;
+
+        Rectangle {
+           y: 0;
+            width: 100%;
+            height: root.height * 2;
+            border-radius: self.height / 2;
+            border-color: black;
+            border-width: 4px;
+        }
+
+
     }
 
     states [
         closed when root.state == MouthState.Closed : {
-            root.height: 6px;
+            main.height: root.closed-height;
+            angry.height: root.height / 3;
+
+            in {
+                animate main.height {
+                    duration: 150ms;
+                }
+
+                animate angry.height {
+                    delay: 150ms;
+                    duration: 150ms;
+                }
+            }
+
+            out {
+                animate main.height {
+                    delay: 150ms;
+                    duration: 150ms;
+                }
+
+                animate angry.height {
+                    duration: 150ms;
+                }
+            }
         }
     ]
 
-    animate height {
-        duration: 300ms;
-    }
+
 }

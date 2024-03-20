@@ -14,8 +14,8 @@ export component Face {
 
     background := Rectangle {
         border-radius: max(self.width, self.height) / 2;
-        border-width: 1px;
-        border-color: black;
+        border-width: 3px;
+        border-color: self.background.darker(2);
         background: #fdcb47;
 
         left-eye := Eye {
