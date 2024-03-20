@@ -1,5 +1,6 @@
 import { Eye, EyeState } from "eye.slint";
-import { Mouth } from "mouth.slint";
+import { Mouth, MouthState } from "mouth.slint";
+import { Palette } from "palette.slint";
 
 export enum FaceState {
     Default,
@@ -11,7 +12,7 @@ export component Face {
 
     width: root.height;
 
-    Rectangle {
+    background := Rectangle {
         border-radius: max(self.width, self.height) / 2;
         border-width: 1px;
         border-color: black;
@@ -27,9 +28,13 @@ export component Face {
             y: 110px;
         }
 
-        Mouth {
+        mouth := Mouth {
             y: root.height / 2 + (root.height / 2 - self.height) / 2;
             width: root.width - 256px;
+        }
+
+        animate background {
+             duration: 300ms;
         }
     }
 
@@ -37,6 +42,8 @@ export component Face {
         angry when root.state == FaceState.Angry : {
             left-eye.state: EyeState.PartialClosed;
             right-eye.state: EyeState.EybrownUp;
+            mouth.state: MouthState.Closed;
+            background.background: Palette.angy;
         }
     ]
 }

@@ -1,13 +1,30 @@
+export enum MouthState {
+    Default,
+    Closed
+}
+
 export component Mouth inherits Rectangle {
+    in property <MouthState> state;
+
     width: 600px;
-    height: self.width / 2;
+    height: root.width / 2;
     clip: true;
 
     Rectangle {
-        y: -self.height / 2;
+        y: root.height - self.height;
         width: 100%;
         height: 200%;
         border-radius: self.height / 2;
         background: black;
+    }
+
+    states [
+        closed when root.state == MouthState.Closed : {
+            root.height: 6px;
+        }
+    ]
+
+    animate height {
+        duration: 300ms;
     }
 }
