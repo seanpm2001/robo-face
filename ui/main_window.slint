@@ -15,7 +15,9 @@ export component MainWindow inherits Window {
         y: 4px;
 
         model: [
-            "Default",
+            "Happy",
+            "Neutral",
+            "Suspicious",
             "Angy"
         ];
     }
@@ -25,6 +27,14 @@ export component MainWindow inherits Window {
             return FaceState.Angry;
         }
 
-        FaceState.Default
+        if state == "Neutral" {
+            return FaceState.Neutral;
+        }
+
+        if state == "Suspicious" {
+            return FaceState.Suspicious;
+        }
+
+        FaceState.Happy
     }
 }

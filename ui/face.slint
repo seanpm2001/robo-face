@@ -3,7 +3,9 @@ import { Mouth, MouthState } from "mouth.slint";
 import { Palette } from "palette.slint";
 
 export enum FaceState {
-    Default,
+    Happy,
+    Neutral,
+    Suspicious,
     Angry
 }
 
@@ -39,10 +41,18 @@ export component Face {
     }
 
     states [
+        suspicious when root.state == FaceState.Suspicious : {
+            left-eye.state: EyeState.PartialClosed;
+            right-eye.state: EyeState.EybrownUp;
+            mouth.state: MouthState.Neutral;
+        }
+        neutral when root.state == FaceState.Neutral : {
+            mouth.state: MouthState.Neutral;
+        }
         angry when root.state == FaceState.Angry : {
             left-eye.state: EyeState.PartialClosed;
             right-eye.state: EyeState.EybrownUp;
-            mouth.state: MouthState.Closed;
+            mouth.state: MouthState.Angry;
             background.background: Palette.angy;
         }
     ]

@@ -1,6 +1,7 @@
 export enum MouthState {
-    Default,
-    Closed
+    Happy,
+    Neutral,
+    Angry
 }
 
 export component Mouth inherits Rectangle {
@@ -47,7 +48,23 @@ export component Mouth inherits Rectangle {
     }
 
     states [
-        closed when root.state == MouthState.Closed : {
+        neutral when root.state == MouthState.Neutral : {
+            main.height: root.closed-height;
+
+            in {
+                animate main.height {
+                    duration: 150ms;
+                }
+            }
+
+            out {
+                animate main.height {
+                    duration: 150ms;
+                }
+            }
+        }
+
+        angry when root.state == MouthState.Angry : {
             main.height: root.closed-height;
             angry.height: root.height / 3;
 
@@ -74,6 +91,4 @@ export component Mouth inherits Rectangle {
             }
         }
     ]
-
-
 }
