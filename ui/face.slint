@@ -6,7 +6,8 @@ export enum FaceState {
     Happy,
     Neutral,
     Suspicious,
-    Angry
+    Angry,
+    Bored
 }
 
 export component Face {
@@ -41,6 +42,9 @@ export component Face {
     }
 
     states [
+        bored when root.state == FaceState.Bored : {
+            mouth.state: MouthState.Angry;
+        }
         suspicious when root.state == FaceState.Suspicious : {
             left-eye.state: EyeState.PartialClosed;
             right-eye.state: EyeState.EybrownUp;

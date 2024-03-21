@@ -18,7 +18,8 @@ export component MainWindow inherits Window {
             "Happy",
             "Neutral",
             "Suspicious",
-            "Angy"
+            "Angy",
+            "Bored"
         ];
     }
 
@@ -33,6 +34,10 @@ export component MainWindow inherits Window {
 
         if state == "Suspicious" {
             return FaceState.Suspicious;
+        }
+
+        if state == "Bored" {
+            return FaceState.Bored;
         }
 
         FaceState.Happy
