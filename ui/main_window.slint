@@ -1,10 +1,27 @@
 import { Face, FaceState } from "face.slint";
-import { ComboBox } from "std-widgets.slint";
+import { ComboBox, GroupBox, VerticalBox, AboutSlint } from "std-widgets.slint";
+
+@rust-attr(derive(serde::Deserialize))
+struct Telemetry {
+    position: float,
+    velocity: float,
+    rotation: float,
+    acceleration: float,
+    battery: float,
+}
 
 export component MainWindow inherits Window {
     title: "robo-face";
     width: 1024px;
     height: 600px;
+
+    in property <Telemetry> telemetry: {
+        position : 1.00,
+        velocity : 0.5,
+        rotation : -0.4,
+        acceleration: 1.234,
+        battery: 80.1,
+    };
 
     Face {
         height: root.height - 64px;
@@ -14,32 +31,43 @@ export component MainWindow inherits Window {
     combobox := ComboBox {
         y: 4px;
 
-        model: [
-            "Happy",
-            "Neutral",
-            "Suspicious",
-            "Angy",
-            "Bored"
-        ];
+        model: ["Happy", "Neutral", "Suspicious", "Angy", "Bored"];
     }
 
     pure function string-to-face-state(state: string) -> FaceState {
         if state == "Angy" {
             return FaceState.Angry;
         }
-
         if state == "Neutral" {
             return FaceState.Neutral;
         }
-
         if state == "Suspicious" {
             return FaceState.Suspicious;
         }
-
         if state == "Bored" {
             return FaceState.Bored;
         }
-
         FaceState.Happy
+    }
+
+    GroupBox {
+        //title: "Telemetry";
+        width: 30%;
+        x: 0px;
+        y: 0px;
+        VerticalBox {
+            Text {
+                text: "Position: \{telemetry.position}";
+            }
+
+            Text {
+                text: "Battery: \{telemetry.battery}%";
+            }
+        }
+    }
+
+    AboutSlint {
+        width: 20%;
+        x: parent.width - self.width;
     }
 }
