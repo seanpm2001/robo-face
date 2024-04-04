@@ -1,18 +1,20 @@
 #![deny(unsafe_code)]
 
 use futures_util::StreamExt;
+use rand::prelude::*;
 use std::sync::Arc;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::UnboundedSender;
 use tokio::sync::RwLock;
 use tokio_stream::wrappers::UnboundedReceiverStream;
-
 use warp::ws::Message;
 use warp::Filter;
 
 slint::include_modules!();
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut rng = rand::thread_rng();
+
     let main_window = MainWindow::new()?;
 
     let main_window_weak = main_window.as_weak();
@@ -22,6 +24,29 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
             .block_on(robot_server(main_window_weak))
             .unwrap();
     });
+
+    let main_window_weak = main_window.as_weak();
+    let random_emotion_timer = slint::Timer::default();
+    random_emotion_timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_secs(3),
+        move || {
+            let main_window = main_window_weak.unwrap();
+            let _telemetry = main_window.get_telemetry();
+            let random_emotion: f32 = rng.gen();
+            let new_state = if random_emotion < 0.5 {
+                FaceState::Neutral
+            } else if random_emotion < 0.6 {
+                FaceState::Suspicious
+            } else if random_emotion < 0.8 {
+                FaceState::Happy
+            } else {
+                FaceState::Bored
+            };
+
+            main_window.set_face_state(new_state);
+        },
+    );
 
     main_window.run()?;
 

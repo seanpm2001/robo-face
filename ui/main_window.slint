@@ -1,6 +1,8 @@
 import { Face, FaceState } from "face.slint";
 import { ComboBox, GroupBox, VerticalBox, AboutSlint } from "std-widgets.slint";
 
+export { FaceState }
+
 @rust-attr(derive(serde::Deserialize))
 struct Telemetry {
     position: float,
@@ -8,6 +10,7 @@ struct Telemetry {
     rotation: float,
     acceleration: float,
     battery: float,
+    cg_angle: float,
 }
 
 export component MainWindow inherits Window {
@@ -15,24 +18,28 @@ export component MainWindow inherits Window {
     width: 1024px;
     height: 600px;
 
-    in property <Telemetry> telemetry: {
+    in-out property <Telemetry> telemetry: {
         position : 1.00,
         velocity : 0.5,
         rotation : -0.4,
         acceleration: 1.234,
         battery: 80.1,
+        cg_angle: 0.0,
     };
+    in-out property face-state <=> face.state;
 
-    Face {
+    face := Face {
         height: root.height - 64px;
-        state: root.string-to-face-state(combobox.current-value);
+        //state: root.string-to-face-state(combobox.current-value);
     }
 
+    /*
     combobox := ComboBox {
         y: 4px;
 
         model: ["Happy", "Neutral", "Suspicious", "Angy", "Bored"];
     }
+    */
 
     pure function string-to-face-state(state: string) -> FaceState {
         if state == "Angy" {
