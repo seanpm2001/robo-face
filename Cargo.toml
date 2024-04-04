@@ -8,11 +8,10 @@ license = "MIT"
 publish = false
 
 [[bin]]
-path = "main.rs"
 name = "robo-face"
 
 [dependencies]
-slint = { version = "1.5.0" }
+slint = { version = "1.5.1" }
 
 [build-dependencies]
-slint-build = { version = "1.5.0" }
+slint-build = { version = "1.5.1" }

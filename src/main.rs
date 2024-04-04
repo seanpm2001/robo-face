@@ -5,8 +5,10 @@ use wasm_bindgen::prelude::*;
 
 slint::include_modules!();
 
-pub fn main() {
-    let main_window = MainWindow::new().unwrap();
+pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let main_window = MainWindow::new()?;
 
-    main_window.run().unwrap();
+    main_window.run()?;
+
+    Ok(())
 }
