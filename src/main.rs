@@ -71,6 +71,16 @@ async fn robot_server(main_window: slint::Weak<MainWindow>) -> tokio::io::Result
                         Ok(telemetry) => {
                             main_window
                                 .upgrade_in_event_loop(move |main_window| {
+                                    let angle = telemetry.cg_angle;
+                                    if (angle > -8.) && (angle < -6.) || (angle > -2.) && angle < 0.
+                                    {
+                                        // Small push
+                                        main_window.set_face_state(FaceState::Suspicious);
+                                    } else if (angle < -8.) || (angle > 0.) {
+                                        // Big push
+                                        main_window.set_face_state(FaceState::Angry);
+                                    }
+
                                     main_window.set_telemetry(telemetry);
                                 })
                                 .unwrap();
