@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  selfbalancingbot:
+    image: gabs28/selfbalancingbot:latest
+    container_name: selfbalancingbot
+    privileged: true
+    network_mode: host
+    cap_add:
+      - SYS_RAWIO
+    volumes:
+      - /dev:/dev
+    devices:
+      - /dev/mem
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    pull_policy: always
+
+  torizon-robo-demo:
+    image: ghcr.io/slint-ui/slint/torizon-robo-demo-arm64-vivante:latest
+    user: torizon
+    volumes:
+      - /run/udev:/run/udev
+      - /dev:/dev
+      - /tmp:/tmp
+    device_cgroup_rules:
+      - 'c 199:* rmw'
+      - 'c 226:* rmw'
+      - 'c 13:* rmw'
+      - 'c 4:* rmw'
+    pull_policy: always
