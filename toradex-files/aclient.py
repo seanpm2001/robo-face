@@ -4,6 +4,7 @@ import struct
 import asyncio
 import json
 import websockets
+import argparse  # Import the argparse module
 
 TARGET_ADDR = 0x40000000
 MAP_LENGTH = 4096
@@ -16,6 +17,13 @@ control_mapping = {
     'right': 0b10,
     'left': 0b11,
 }
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='WebSocket server for robot control.')
+    parser.add_argument('--remoteaddress', type=str, default='ws://0.0.0.0:8001', help='Server address for the Remote control in the format ws://ip:port')
+    parser.add_argument('--uiaddress', type=str, default='ws://0.0.0.0:8000', help='Server address for the UI in the format ws://ip:port')
+    return parser.parse_args()
 
 async def receive_and_process_control(websocket, server_url):
     mem_fd = os.open("/dev/mem", os.O_RDWR | os.O_SYNC)
@@ -33,7 +41,7 @@ async def receive_and_process_control(websocket, server_url):
                     mm.seek(0)  # Move to the beginning of the mmap
                     mm.write(struct.pack('I', value))  # Assuming we're writing an unsigned int (adjust as needed)
                 else:
-                    print(f"""'{command}' is not a valid instruction. Retry with any of: 
+                    print(f"""'{command}' is not a valid instruction. Retry with any of:
                           - back
                           - front
                           - right
@@ -88,11 +96,17 @@ async def manage_connection(server_url):
         except (websockets.ConnectionClosedError, websockets.ConnectionClosedOK, ConnectionRefusedError, OSError) as e:
             print(f"Connection lost or cannot connect to {server_url}, attempting to reconnect in 5 seconds... Error: {e}")
             await asyncio.sleep(5)
-            
+
 async def main():
     # URLs for the two different servers
-    server_url1 = 'ws://0.0.0.0:8000'
-    server_url2 = 'ws://0.0.0.0:8001'  # Assuming the second server is on port 8001
+
+    args = parse_arguments()
+    remoteaddress = args.remoteaddress
+    uiadress = args.uiaddress
+
+
+    server_url1 = args.remoteaddress
+    server_url2 = args.uiaddress  # Assuming the second server is on port 8001
     # Create tasks for managing connections to both servers
     task1 = asyncio.create_task(manage_connection(server_url1))
     task2 = asyncio.create_task(manage_connection(server_url2))
@@ -101,5 +115,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-

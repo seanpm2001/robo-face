@@ -1,6 +1,17 @@
+import mmap
+import os
+import struct
 import asyncio
 import json
 import websockets
+import argparse  # Import the argparse module
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='WebSocket server for robot control.')
+    parser.add_argument('--remoteaddress', type=str, default='ws://0.0.0.0:8001', help='Server address for the Remote control in the format ws://ip:port')
+    parser.add_argument('--uiaddress', type=str, default='ws://0.0.0.0:8000', help='Server address for the UI in the format ws://ip:port')
+    return parser.parse_args()
+
 async def receive_and_process_control(websocket, server_url):
     async for message in websocket:
         control_data = json.loads(message)
@@ -49,6 +60,7 @@ async def send_telemetry(websocket):
         }
         await websocket.send(json.dumps(telemetry_data))
         await asyncio.sleep(1)  # Adjust the frequency of telemetry updates as needed
+
 async def manage_connection(server_url):
     while True:
         try:
@@ -59,15 +71,22 @@ async def manage_connection(server_url):
         except (websockets.ConnectionClosedError, websockets.ConnectionClosedOK, ConnectionRefusedError, OSError) as e:
             print(f"Connection lost or cannot connect to {server_url}, attempting to reconnect in 5 seconds... Error: {e}")
             await asyncio.sleep(5)
+
 async def main():
     # URLs for the two different servers
-    # Tweak the IP and port to match the server configuration
-    server_url1 = 'ws://0.0.0.0:8000' # Connecting to UI server (UI container running in the robot)
-    server_url2 = 'ws://0.0.0.0:8001' # Connecting to controller server (any controller in the same local networks) 
+
+    args = parse_arguments()
+    remoteaddress = args.remoteaddress
+    uiadress = args.uiaddress
+
+
+    server_url1 = args.remoteaddress
+    server_url2 = args.uiaddress  # Assuming the second server is on port 8001
     # Create tasks for managing connections to both servers
     task1 = asyncio.create_task(manage_connection(server_url1))
     task2 = asyncio.create_task(manage_connection(server_url2))
     # Wait for both tasks to complete
     await asyncio.gather(task1, task2)
+
 if __name__ == "__main__":
     asyncio.run(main())

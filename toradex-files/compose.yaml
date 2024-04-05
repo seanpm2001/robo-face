@@ -5,16 +5,20 @@ services:
     image: gabs28/selfbalancingbot:latest
     container_name: selfbalancingbot
     privileged: true
-    network_mode: host
+    restart: always
     cap_add:
+      - CAP_SYS_TTY_CONFIG
       - SYS_RAWIO
     volumes:
       - /dev:/dev
+      - /tmp:/tmp
     devices:
-      - /dev/mem
+      - "/dev/mem:/dev/mem"
+    environment:
+      REMOTE_ADDRESS: "ws://0.0.0.0:8001"
+      UI_ADDRESS: "ws://0.0.0.0:8000"
     stdin_open: true
     tty: true
-    command: /bin/bash
     pull_policy: always
 
   torizon-robo-demo:
