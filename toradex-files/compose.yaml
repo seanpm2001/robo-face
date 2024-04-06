@@ -22,7 +22,7 @@ services:
     pull_policy: always
 
   torizon-robo-demo:
-    image: ghcr.io/slint-ui/slint/torizon-robo-demo-arm64-vivante:latest
+    image: ghcr.io/slint-ui/slint/torizon-robo-demo-arm64-vivante:toradex
     user: torizon
     volumes:
       - /run/udev:/run/udev
